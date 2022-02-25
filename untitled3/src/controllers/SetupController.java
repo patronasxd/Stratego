@@ -1,12 +1,17 @@
 package controllers;
 
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import models.Board;
 import models.Pawn;
 import models.Player;
+import models.Space;
 import view.SetupView;
 import view.View;
+
+import java.util.Arrays;
 
 public class SetupController extends Controller{
 
@@ -17,11 +22,13 @@ public class SetupController extends Controller{
     private int id = 0;
     private String playerName = "gilles";
     private Player player;
+    private Board board;
 
     public SetupController() {
         this.view = new SetupView();
 
         player = new Player(playerName);
+        board = new Board();
 
 
 
@@ -124,11 +131,47 @@ public class SetupController extends Controller{
 
     private void setTile(Button buttonTileOne) {
 
-            player.setPawn(new Pawn(current2SelectedPawn, teamColor, id), id);
+        try {
 
-        updateTiles(buttonTileOne);
-        id++;
-        updateCount(buttonTileOne);
+
+            int space = Integer.parseInt(buttonTileOne.getText());
+            //gets the value of the tile
+
+
+            System.out.println(board.isEmpty(space));
+            if (!board.isEmpty(space)){
+
+                System.out.println("it should change now");
+                board.replacePawn(space,new Space(player.getPawn()[space],space));
+
+            }
+            //checks if the spot was already taken replace the old one with new one in the array
+
+
+
+            player.setPawn(new Pawn(current2SelectedPawn, teamColor, id), id);
+            //adds the pawn to the player in a array
+
+            board.getSpaces()[id].setPawn(player.getPawn()[id]);
+
+            board.setSpaces(new Space(player.getPawn()[id],space));
+            //adds the pawn to the board on a tile
+
+          //  board.getSpaces()[0].setPawn(player.getPawn()[id]);
+
+
+
+            view.getButton().getText();
+            updateTiles(buttonTileOne);
+            id++;
+            updateCount(buttonTileOne);
+            current2SelectedPawn = "";
+
+
+        } catch (NumberFormatException e) {
+
+        }
+
     }
 
     private void updateCount(Button buttonTileOne) {
@@ -179,7 +222,7 @@ public class SetupController extends Controller{
                     countGeneral++;
                     break;
 
-                case "Lieutenant":
+                case "Lieutenant    ":
                     countLieutenant++;
                     break;
 
@@ -251,20 +294,38 @@ public class SetupController extends Controller{
             }
 
 
-            System.out.println(player.getPawn()[i].getType());
+           // System.out.println(Arrays.toString(board.getSpacesList().toString() ) );
+
+              System.out.println(board.getSpaces()[i].getPawn().getType() + " " + board.getSpaces()[i].getPawn().getId());
+
+
+
+
         }
+
+
 
 
 
     }
 
     private void updateTiles(Button buttonTileOne) {
-        Image imgMajor = new Image("C:\\Users\\Gilles\\Downloads\\untitled3\\src\\images\\"+current2SelectedPawn+".png");
-        ImageView view11 = new ImageView(imgMajor);
-        view11.setFitHeight(80);
-        view11.setPreserveRatio(true);
-        buttonTileOne.setPrefSize(80, 80);
-        buttonTileOne.setGraphic(view11);
+
+        try {
+            Image imgMajor = new Image("C:\\Users\\Gilles\\Downloads\\untitled3\\src\\images\\"+current2SelectedPawn+".png");
+            ImageView view11 = new ImageView(imgMajor);
+            view11.setFitHeight(80);
+            view11.setPreserveRatio(true);
+            buttonTileOne.setPrefSize(80, 80);
+            buttonTileOne.setGraphic(view11);
+        } catch (Exception e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setContentText("Select a Pawn first");
+            alert.show();
+
+        }
+
+
     }
 
     private void buttonBomb() {
